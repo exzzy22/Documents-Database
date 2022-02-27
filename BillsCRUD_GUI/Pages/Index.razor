@@ -1,0 +1,37 @@
+﻿@page "/"
+@inject IDocumentService _documentService
+@using System.Linq
+<input @bind-value="Search" @bind-value:event="oninput" @onkeyup="Filter"/>
+ <table class="table">
+ <thead>
+  <tr>
+    <th scope="col">Company</th>
+    <th scope="col">Date</th>
+    <th scope="col">Items</th>
+    <th scope="col">Buttons</th>
+  </tr>
+</thead>
+<tbody>
+        @foreach(var doc in Documents)
+        {
+            <tr scope="row"><td>@doc.Company</td><td>@doc.Date</td><td><_ItemsView Items="@doc.Items"></_ItemsView></td></tr>  
+        }
+</tbody>
+</table> 
+
+
+@code{
+    private IEnumerable<DocumentDTO> Documents { get; set; }
+    private string Search { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        Documents = _documentService.GetAll();
+    }
+
+    public void Filter()
+    {
+        Documents = Documents.Where(d => d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) || d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase));
+    }
+
+}
