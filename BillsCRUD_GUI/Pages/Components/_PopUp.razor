@@ -1,0 +1,46 @@
+﻿@page "/popup/"
+
+<EditForm Model="@DocumentModel" OnValidSubmit="@SubmitEventHandler">
+<div style="width: 350px;">
+  <div class="form-group">
+    <label for="InputComapny">Comapny</label>
+    <InputTextArea @bind-Value="DocumentModel.Company" type="text" class="form-control" id="InputComapny" placeholder="Comapny Name" rows="1" />
+    <ValidationMessage For="@(()=>DocumentModel.Company)"/>
+  </div>
+  <div class="form-group">
+    <label for="InputDate">Date</label>
+    <InputDate @bind-Value="DocumentModel.Date" class="form-control"/>
+    <ValidationMessage For="@(()=>DocumentModel.Date)"/>
+  </div>
+  <div class="form-group">
+    <label for="ListItems">Example multiple select</label>
+    <select multiple class="form-control" id="ListItems">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="FileExt">File ext</label>
+    <textarea class="form-control" id="FileExt" rows="1"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="DOC">DOC</label>
+    <textarea class="form-control" id="DOC" rows="1"></textarea>
+  </div>
+  <div class="form-group">
+  <br />
+    <button type="button" class="btn btn-primary" style="float: right;">Update</button>
+  </div>
+</div>
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public DocumentDTO DocumentModel { get; set; } = new();
+    public void SubmitEventHandler()
+    { }
+}

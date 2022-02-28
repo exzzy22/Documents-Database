@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillsCRUD_GUI", "BillsCRUD_GUI\BillsCRUD_GUI.csproj", "{4C45F07A-7F68-4876-8D89-D63D01E82C48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BillsCRUD_GUI", "BillsCRUD_GUI\BillsCRUD_GUI.csproj", "{4C45F07A-7F68-4876-8D89-D63D01E82C48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCoreModels", "EFCoreModels\EFCoreModels.csproj", "{727AC93A-6B87-4242-B68F-FBC4D70AD19E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCoreModels", "EFCoreModels\EFCoreModels.csproj", "{727AC93A-6B87-4242-B68F-FBC4D70AD19E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{4C89F801-612C-4B8B-A432-9D3196A18191}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{4C89F801-612C-4B8B-A432-9D3196A18191}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
