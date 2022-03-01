@@ -4,6 +4,7 @@ namespace Services
 {
     public class DocumentDTO
     {
+        public int PkDocumentId { get; set; }
         public string Company { get; set; } = null!;
         public DateTime? Date { get; set; }
         public string FileExt { get; set; } = null!;

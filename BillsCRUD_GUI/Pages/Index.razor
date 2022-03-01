@@ -17,13 +17,15 @@
         @foreach(var doc in Documents)
         {
             <tr scope="row"><td>@doc.Company</td><td>@doc.Date</td><td><_ItemsView Items="@doc.Items"></_ItemsView></td>
-                <td><button @onclick="@(()=>modal.Show<_PopUp>("Delete"))" class="btn btn-danger">Delete</button></td></tr>  
+                <td><button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button></td></tr>  
         }
 </tbody>
 </table> 
 
 
 @code{
+    [CascadingParameter] 
+    public IModalService Modal { get; set; }
     private IEnumerable<DocumentDTO> Documents { get; set; }
     private string Search { get; set; } = string.Empty;
     bool ShowComponent { get; set; } = false;
@@ -31,6 +33,13 @@
     protected override void OnInitialized()
     {
         Documents = _documentService.GetAll();
+    }
+    void ShowEditDocument(DocumentDTO doc)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(_PopUpEdit.DocumentModel), doc);
+
+        Modal.Show<_PopUpEdit>("Edit Document", parameters);
     }
 
     public void Filter()

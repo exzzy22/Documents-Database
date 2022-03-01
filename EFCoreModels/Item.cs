@@ -20,5 +20,12 @@ namespace EFCoreModels
         [ForeignKey(nameof(FkDocumentId))]
         [InverseProperty(nameof(Document.Items))]
         public virtual Document FkDocument { get; set; } = null!;
+        public Item()
+        { }
+        public Item(string name, int documentID)
+        {
+            Name = name;
+            FkDocumentId = documentID;
+        }
     }
 }
