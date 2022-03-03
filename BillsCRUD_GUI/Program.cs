@@ -3,7 +3,6 @@ using Blazored.Modal;
 using EFCoreModels;
 using Microsoft.EntityFrameworkCore;
 using Services.Service;
-using Services.Service.IService;
 
 var builder = WebApplication.CreateBuilder(args);
 

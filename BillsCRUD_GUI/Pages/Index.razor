@@ -3,7 +3,9 @@
 @inject IModalService modal
 
 @using System.Linq
-<input @bind-value="Search" @bind-value:event="oninput" @onkeyup="Filter"/>
+<label for="Search" class="fw-bold">Search</label>
+<input @bind-value="Search" @bind-value:event="oninput" @onkeyup="Filter" id="Search"/>
+<button @onclick="@(()=>Modal.Show<_PopUpAdd>("Add Document"))" class="btn btn-primary" style="float: right;">Add New Document</button>
  <table class="table">
  <thead>
   <tr>
@@ -16,8 +18,15 @@
 <tbody>
         @foreach(var doc in Documents)
         {
-            <tr scope="row"><td>@doc.Company</td><td>@doc.Date</td><td><_ItemsView Items="@doc.Items"></_ItemsView></td>
-                <td><button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button></td></tr>  
+            <tr scope="row">
+                <td>@doc.Company</td>
+                <td>@doc.Date</td>
+                <td><_ItemsView Items="@doc.Items"></_ItemsView></td>
+                <td>
+                    <button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button>
+                    <button @onclick="@(()=>RemoveDocument(doc))" class="btn btn-danger">Delete</button>
+                </td>
+             </tr>  
         }
 </tbody>
 </table> 
@@ -38,8 +47,14 @@
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(_PopUpEdit.DocumentModel), doc);
+        var options = new ModalOptions();
+        options.Animation = ModalAnimation.FadeInOut(2);
 
         Modal.Show<_PopUpEdit>("Edit Document", parameters);
+    }
+    public void RemoveDocument(DocumentDTO doc)
+    {
+        _documentService.Delete(doc);
     }
 
     public void Filter()

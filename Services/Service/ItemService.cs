@@ -1,10 +1,16 @@
-﻿using Services.Service.IService;
+﻿using Services.Service;
 using EFCoreModels;
 using AutoMapper;
 using System.Linq;
 
 namespace Services.Service
 {
+    public interface IItemService
+    {
+        public IEnumerable<ItemDTO> GetAll();
+        public int Add(Item item);
+        public int Delete(Item item);
+    }
     public class ItemService : IItemService
     {
         private readonly BillsContext _db;

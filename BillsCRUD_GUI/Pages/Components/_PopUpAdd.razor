@@ -4,7 +4,7 @@
 <div style="width: 350px;">
   <div class="form-group">
     <label for="InputComapny">Comapny</label>
-    <InputTextArea @bind-Value="DocumentModel.Company" type="text" class="form-control" id="InputComapny" placeholder="Comapny Name" rows="1" >@DocumentModel.Company</InputTextArea>
+    <InputTextArea @bind-Value="DocumentModel.Company" type="text" class="form-control" id="InputComapny" placeholder="Comapny Name" rows="1" ></InputTextArea>
     <ValidationMessage For="@(()=>DocumentModel.Company)"/>
   </div>
   <div class="form-group">
@@ -30,7 +30,7 @@
   </div>
   <div class="form-group">
   <br />
-    <button type="button" @onclick="@Update" class="btn btn-primary" style="float: right;">Update</button>
+    <button type="button" @onclick="@Add" class="btn btn-primary" style="float: right;">Add</button>
   </div>
 </div>
 </EditForm>
@@ -40,10 +40,15 @@
     [CascadingParameter] 
     BlazoredModalInstance ModalInstance { get; set; }
     [Parameter]
-    public DocumentDTO DocumentModel { get; set; } = new();
+    public DocumentDTO DocumentModel { get; set; }
     public string AddText { get; set; }
     private List<Item> tempItems = new();
     private long maxFileSize = 1024 * 15;
+    protected override async Task OnInitializedAsync()
+    {
+        DocumentModel = new();
+        DocumentModel.Items = new List<Item>();
+    }
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         IBrowserFile file = e.File;
@@ -52,7 +57,7 @@
         string path = Path.GetTempPath();
         await using FileStream fs = new(path, FileMode.Create);
         await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
-        DocumentModel.DOC = fs.ToByteArray();
+        DocumentModel.DOC = await fs.ToByteArrayAsync();
     }
     public void AddItem()
     {
@@ -63,9 +68,9 @@
     {
         DocumentModel.Items.Remove(item);
     }
-    public async Task Update()
+    public async Task Add()
     {
-        _documentService.Update(DocumentModel);
+        await _documentService.Create(DocumentModel);
         await ModalInstance.CloseAsync();
     }
 }
