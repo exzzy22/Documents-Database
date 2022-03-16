@@ -5,7 +5,7 @@
 @using System.Linq
 <label for="Search" class="fw-bold">Search</label>
 <input @bind-value="Search" @bind-value:event="oninput" @onkeyup="Filter" id="Search"/>
-<button @onclick="@(()=>Modal.Show<_PopUpAdd>("Add Document"))" class="btn btn-primary" style="float: right;">Add New Document</button>
+<button @onclick="@(()=>ShowAddDocument())" class="btn btn-primary" style="float: right;">Add New Document</button>
  <table class="table">
  <thead>
   <tr>
@@ -16,7 +16,7 @@
   </tr>
 </thead>
 <tbody>
-        @foreach(var doc in Documents)
+        @foreach (var doc in Documents)
         {
             <tr scope="row">
                 <td>@doc.Company</td>
@@ -26,14 +26,14 @@
                     <button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button>
                     <button @onclick="@(()=>RemoveDocument(doc))" class="btn btn-danger">Delete</button>
                 </td>
-             </tr>  
+            </tr>
         }
-</tbody>
+    </tbody>
 </table> 
 
 
 @code{
-    [CascadingParameter] 
+    [CascadingParameter]
     public IModalService Modal { get; set; }
     private IEnumerable<DocumentDTO> Documents { get; set; }
     private string Search { get; set; } = string.Empty;
@@ -43,18 +43,30 @@
     {
         Documents = _documentService.GetAll();
     }
-    void ShowEditDocument(DocumentDTO doc)
+    public async Task ShowEditDocument(DocumentDTO doc)
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(_PopUpEdit.DocumentModel), doc);
-        var options = new ModalOptions();
-        options.Animation = ModalAnimation.FadeInOut(2);
+        var messageForm = Modal.Show<_PopUpEdit>("Edit Document", parameters);
+        var result =  await messageForm.Result;
 
-        Modal.Show<_PopUpEdit>("Edit Document", parameters);
+        if (!result.Cancelled)
+        Documents = _documentService.GetAll();
     }
+    
+    public async Task ShowAddDocument()
+    {
+        var messageForm = Modal.Show<_PopUpAdd>("Add Document");
+        var result =  await messageForm.Result;
+
+        if (!result.Cancelled)
+        Documents = _documentService.GetAll();
+    }
+
     public void RemoveDocument(DocumentDTO doc)
     {
         _documentService.Delete(doc);
+        Documents = _documentService.GetAll();
     }
 
     public void Filter()
