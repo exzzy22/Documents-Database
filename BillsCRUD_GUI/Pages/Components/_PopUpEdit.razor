@@ -11,7 +11,6 @@
   <div class="form-group">
     <label for="InputDate">Date</label>
     <InputDate @bind-Value="DocumentModel.Date" class="form-control"/>
-    <ValidationMessage For="@(()=>DocumentModel.Date)"/>
   </div>
   <div class="form-group">
       <br/>
@@ -44,7 +43,12 @@
     public DocumentDTO DocumentModel { get; set; } = new();
     public string AddText { get; set; }
     private List<Item> tempItems = new();
-    private long maxFileSize = 1024 * 15;
+
+    protected override async Task OnInitializedAsync()
+    {
+        DocumentModel.FileExist = true;
+    }
+
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         DocumentModel.FileExt ="."+ e.File.ContentType.Split("/")[1];
@@ -64,6 +68,7 @@
     }
     public async Task Update()
     {
+        DocumentModel.FileExist = false;
         _documentService.Update(DocumentModel);
         await ModalInstance.CloseAsync();
     }

@@ -61,7 +61,7 @@
         var messageForm = Modal.Show<_PopUpEdit>("Edit Document", parameters);
         var result =  await messageForm.Result;
 
-        if (!result.Cancelled)
+        //if (!result.Cancelled)
             Documents = _documentService.GetAll();
     }
 
