@@ -24,6 +24,7 @@ namespace EFCoreModels
         public DateTime? Date { get; set; }
         [StringLength(10)]
         public string FileExt { get; set; } = null!;
+
         [Column("DOC")]
         public byte[] DOC { get; set; } = null!;
 

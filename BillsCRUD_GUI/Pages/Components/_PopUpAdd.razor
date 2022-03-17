@@ -1,6 +1,7 @@
 ﻿@inject IDocumentService _documentService
 
-<EditForm Model="@DocumentModel">
+<EditForm Model="@DocumentModel" OnValidSubmit="@Add">
+<DataAnnotationsValidator /> 
 <div style="width: 350px;">
   <div class="form-group">
     <label for="InputComapny">Comapny</label>
@@ -10,7 +11,6 @@
   <div class="form-group">
     <label for="InputDate">Date</label>
     <InputDate @bind-Value="DocumentModel.Date" class="form-control"/>
-    <ValidationMessage For="@(()=>DocumentModel.Date)"/>
   </div>
   <div class="form-group">
       <br/>
@@ -25,12 +25,13 @@
         </tbody>
     </table>
   </div>
-  <div class="form-group">
+ <div class="form-group">
     <InputFile OnChange="@OnInputFileChange" />
+    <ValidationMessage For="@(()=>DocumentModel.FileExist)"/>
   </div>
   <div class="form-group">
   <br />
-    <button type="button" @onclick="@Add" class="btn btn-primary" style="float: right;">Add</button>
+    <button type="submit" class="btn btn-primary" style="float: right;">Add</button>
   </div>
 </div>
 </EditForm>
@@ -43,31 +44,35 @@
     public DocumentDTO DocumentModel { get; set; }
     public string AddText { get; set; }
     private List<Item> tempItems = new();
-    private long maxFileSize = 1024 * 15;
+    public EditContext editContext { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         DocumentModel = new();
         DocumentModel.Items = new List<Item>();
     }
+
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        IBrowserFile file = e.File;
-        var fileType = e.File.ContentType.Split("/");
-        DocumentModel.FileExt = fileType[1];
-        string path = Path.GetTempPath();
-        await using FileStream fs = new(path, FileMode.Create);
-        await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
-        DocumentModel.DOC = await fs.ToByteArrayAsync();
+        DocumentModel.FileExt ="."+ e.File.ContentType.Split("/")[1];
+        MemoryStream ms = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(ms);
+        var bytes = ms.ToArray();
+        DocumentModel.DOC = bytes;
+        DocumentModel.FileExist = true;
     }
+
     public void AddItem()
     {
         Item item = new Item(AddText,DocumentModel.PkDocumentId);
         DocumentModel.Items.Add(item);
     }
+
     public void RemoveItem(Item item)
     {
         DocumentModel.Items.Remove(item);
     }
+
     public async Task Add()
     {
         await _documentService.Create(DocumentModel);

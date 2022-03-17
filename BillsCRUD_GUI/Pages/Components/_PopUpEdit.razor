@@ -1,6 +1,7 @@
 ﻿@inject IDocumentService _documentService
 
-<EditForm Model="@DocumentModel">
+<EditForm Model="@DocumentModel" OnValidSubmit="@Update">
+<DataAnnotationsValidator />
 <div style="width: 350px;">
   <div class="form-group">
     <label for="InputComapny">Comapny</label>
@@ -30,7 +31,7 @@
   </div>
   <div class="form-group">
   <br />
-    <button type="button" @onclick="@Update" class="btn btn-primary" style="float: right;">Update</button>
+    <button type="submit" class="btn btn-primary" style="float: right;">Update</button>
   </div>
 </div>
 </EditForm>
@@ -46,13 +47,11 @@
     private long maxFileSize = 1024 * 15;
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        IBrowserFile file = e.File;
-        var fileType = e.File.ContentType.Split("/");
-        DocumentModel.FileExt = fileType[1];
-        string path = Path.GetTempPath();
-        await using FileStream fs = new(path, FileMode.Create);
-        await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
-        DocumentModel.DOC = fs.ToByteArray();
+        DocumentModel.FileExt ="."+ e.File.ContentType.Split("/")[1];
+        MemoryStream ms = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(ms);
+        var bytes = ms.ToArray();
+        DocumentModel.DOC = bytes;
     }
     public void AddItem()
     {

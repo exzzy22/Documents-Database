@@ -9,7 +9,7 @@
         /// <returns></returns>
         public static string GetString(this List<string> source)
         {
-            return string.Join(",", source);
+            return string.Join("", source);
         }
 
         /// <summary>

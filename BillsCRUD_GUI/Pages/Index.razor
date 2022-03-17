@@ -1,8 +1,13 @@
 ﻿@page "/"
+@using System.IO
+
 @inject IDocumentService _documentService
 @inject IModalService modal
+@inject IJSRuntime JS
 
 @using System.Linq
+@using Microsoft.AspNetCore.Mvc
+
 <label for="Search" class="fw-bold">Search</label>
 <input @bind-value="Search" @bind-value:event="oninput" @onkeyup="Filter" id="Search"/>
 <button @onclick="@(()=>ShowAddDocument())" class="btn btn-primary" style="float: right;">Add New Document</button>
@@ -20,16 +25,22 @@
         {
             <tr scope="row">
                 <td>@doc.Company</td>
-                <td>@doc.Date</td>
+                <td>@if (doc.Date.HasValue) 
+                    {
+                        @doc.Date.Value.ToString("d.M.yyyy");
+                    }
+                    </td>
                 <td><_ItemsView Items="@doc.Items"></_ItemsView></td>
                 <td>
                     <button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button>
                     <button @onclick="@(()=>RemoveDocument(doc))" class="btn btn-danger">Delete</button>
+                    <button @onclick="@(()=>OpenDocument(doc))" class="btn btn-success">Open</button>
                 </td>
             </tr>
         }
     </tbody>
 </table> 
+
 
 
 @code{
@@ -51,16 +62,16 @@
         var result =  await messageForm.Result;
 
         if (!result.Cancelled)
-        Documents = _documentService.GetAll();
+            Documents = _documentService.GetAll();
     }
-    
+
     public async Task ShowAddDocument()
     {
         var messageForm = Modal.Show<_PopUpAdd>("Add Document");
         var result =  await messageForm.Result;
 
         if (!result.Cancelled)
-        Documents = _documentService.GetAll();
+            Documents = _documentService.GetAll();
     }
 
     public void RemoveDocument(DocumentDTO doc)
@@ -69,9 +80,28 @@
         Documents = _documentService.GetAll();
     }
 
-    public void Filter()
+    public async Task OpenDocument(DocumentDTO doc)
     {
-        Documents = Documents.Where(d => d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) || d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase));
+        var fileStream = GetFileStream(doc);
+        var fileName = Guid.NewGuid().ToString() + doc.FileExt;
+
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+
+    private Stream GetFileStream(DocumentDTO doc)
+    {
+        var fileStream = new MemoryStream(doc.DOC);
+
+        return fileStream;
+    }
+
+    public void Filter()
+    {   
+        Documents = Documents.Where(d => d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) 
+        || d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase) || (d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) 
+        && d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase)));
     }
 
 }
