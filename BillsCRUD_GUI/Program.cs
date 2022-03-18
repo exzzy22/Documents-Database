@@ -1,4 +1,3 @@
-using BillsCRUD_GUI.Data;
 using Blazored.Modal;
 using EFCoreModels;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddDbContext<BillsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

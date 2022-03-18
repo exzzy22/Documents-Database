@@ -52,6 +52,8 @@
 
 @code
 {
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
     [CascadingParameter] 
     BlazoredModalInstance ModalInstance { get; set; }
     [Parameter]
@@ -80,9 +82,14 @@
     {
         Item item = new Item(AddText,DocumentModel.PkDocumentId);
         DocumentModel.Items.Add(item);
+        AddText = String.Empty;
     }
-    public void RemoveItem(Item item)
+    public async Task RemoveItem(Item item)
     {
+        var messageForm = Modal.Show<_ConfirmDelete>("Delete Item");
+        var result =  await messageForm.Result;
+
+        if (!result.Cancelled)
         DocumentModel.Items.Remove(item);
     }
     public async Task Update()

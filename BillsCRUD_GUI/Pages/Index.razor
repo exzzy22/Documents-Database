@@ -40,7 +40,7 @@
                 <td>
                     <button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button>
                     <button @onclick="@(()=>RemoveDocument(doc))" class="btn btn-danger">Delete</button>
-                    <button @onclick="@(()=>OpenDocument(doc))" class="btn btn-success">Open</button>
+                    <button @onclick="@(()=>DownloadDocument(doc))" class="btn btn-success">Download</button>
                 </td>
             </tr>
         }
@@ -92,7 +92,7 @@
         Documents = _documentService.GetAll();
     }
 
-    public async Task OpenDocument(DocumentDTO doc)
+    public async Task DownloadDocument(DocumentDTO doc)
     {
         var fileStream = GetFileStream(doc);
         var fileName = Guid.NewGuid().ToString() + doc.FileExt;
