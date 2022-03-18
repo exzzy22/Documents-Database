@@ -1,0 +1,27 @@
+﻿@inject IDocumentService _documentService
+
+<div style="width: 350px;">
+    <div>
+        Are you sure?
+    </div>
+    <br/>
+    <div>
+        <button type="button" @onclick="@(()=>Result("Confirm"))" class="btn btn-primary" style="float: left;">Confirm</button>
+        <button type="button" @onclick="@(()=>Result("Cancel"))" class="btn btn-secondary" style="float: right;">Cancel</button>
+    </div>
+</div>
+
+@code
+{
+    [CascadingParameter] 
+    BlazoredModalInstance ModalInstance { get; set; }
+
+    public async Task Result(string result)
+    {
+        if(result=="Cancel")
+        await ModalInstance.CancelAsync();
+        else
+        await ModalInstance.CloseAsync();
+    }
+
+}

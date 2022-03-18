@@ -20,7 +20,13 @@
     <th scope="col">Buttons</th>
   </tr>
 </thead>
-<tbody>
+    @if (SearchSpinner)
+    {
+        <tbody><tr><td><img src="/Content/Search.gif" /></td></tr></tbody> 
+    }
+    else
+    {
+    <tbody>
         @foreach (var doc in Documents)
         {
             <tr scope="row">
@@ -39,6 +45,7 @@
             </tr>
         }
     </tbody>
+    }
 </table> 
 
 
@@ -48,7 +55,7 @@
     public IModalService Modal { get; set; }
     private IEnumerable<DocumentDTO> Documents { get; set; }
     private string Search { get; set; } = string.Empty;
-    bool ShowComponent { get; set; } = false;
+    bool SearchSpinner { get; set; } = false;
 
     protected override void OnInitialized()
     {
@@ -62,7 +69,7 @@
         var result =  await messageForm.Result;
 
         //if (!result.Cancelled)
-            Documents = _documentService.GetAll();
+        Documents = _documentService.GetAll();
     }
 
     public async Task ShowAddDocument()
@@ -74,9 +81,14 @@
             Documents = _documentService.GetAll();
     }
 
-    public void RemoveDocument(DocumentDTO doc)
+    public async Task RemoveDocument(DocumentDTO doc)
     {
-        _documentService.Delete(doc);
+        var messageForm = Modal.Show<_ConfirmDelete>("Delete Document");
+        var result =  await messageForm.Result;
+
+        if (!result.Cancelled)
+            _documentService.Delete(doc);
+
         Documents = _documentService.GetAll();
     }
 
@@ -98,10 +110,12 @@
     }
 
     public void Filter()
-    {   
+    {
+        SearchSpinner = true;
         Documents = Documents.Where(d => d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) 
         || d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase) || (d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) 
         && d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase)));
+        SearchSpinner = false;
     }
 
 }
