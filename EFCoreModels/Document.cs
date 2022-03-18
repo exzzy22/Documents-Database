@@ -23,7 +23,9 @@ namespace EFCoreModels
         [Column(TypeName = "date")]
         public DateTime? Date { get; set; }
         [StringLength(10)]
-        public string FileExt { get; set; } = null!;
+        public string FileExt { get; set; }
+        [StringLength(50)]
+        public string? Tag { get; set; }
 
         [Column("DOC")]
         public byte[] DOC { get; set; } = null!;

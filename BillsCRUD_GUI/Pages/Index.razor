@@ -17,7 +17,8 @@
     <th scope="col">Company</th>
     <th scope="col">Date</th>
     <th scope="col">Items</th>
-    <th scope="col">Buttons</th>
+    <th scope="col"></th>
+    <th scope="col">Tag</th>
   </tr>
 </thead>
     @if (SearchSpinner)
@@ -42,6 +43,12 @@
                     <button @onclick="@(()=>RemoveDocument(doc))" class="btn btn-danger">Delete</button>
                     <button @onclick="@(()=>DownloadDocument(doc))" class="btn btn-success">Download</button>
                 </td>
+                <td>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-tag" viewBox="0 0 16 16">
+                      <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0z"/>
+                      <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1zm0 5.586 7 7L13.586 9l-7-7H2v4.586z"/>
+                    </svg> @doc.Tag
+               </td>
             </tr>
         }
     </tbody>
@@ -54,31 +61,36 @@
     [CascadingParameter]
     public IModalService Modal { get; set; }
     private IEnumerable<DocumentDTO> Documents { get; set; }
+    private IEnumerable<string?> Tags { get; set; }
     private string Search { get; set; } = string.Empty;
     bool SearchSpinner { get; set; } = false;
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        Documents = _documentService.GetAll();
+        Documents = await _documentService.GetAll();
+        Tags = GetTags(Documents);
     }
     public async Task ShowEditDocument(DocumentDTO doc)
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(_PopUpEdit.DocumentModel), doc);
+        parameters.Add(nameof(_PopUpEdit.Tags), Tags);
         var messageForm = Modal.Show<_PopUpEdit>("Edit Document", parameters);
         var result =  await messageForm.Result;
 
         //if (!result.Cancelled)
-        Documents = _documentService.GetAll();
+        Documents = await _documentService.GetAll();
     }
 
     public async Task ShowAddDocument()
     {
-        var messageForm = Modal.Show<_PopUpAdd>("Add Document");
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(_PopUpAdd.Tags), Tags);
+        var messageForm = Modal.Show<_PopUpAdd>("Add Document", parameters);
         var result =  await messageForm.Result;
 
         if (!result.Cancelled)
-            Documents = _documentService.GetAll();
+            Documents = await _documentService.GetAll();
     }
 
     public async Task RemoveDocument(DocumentDTO doc)
@@ -89,7 +101,7 @@
         if (!result.Cancelled)
             _documentService.Delete(doc);
 
-        Documents = _documentService.GetAll();
+        Documents = await _documentService.GetAll();
     }
 
     public async Task DownloadDocument(DocumentDTO doc)
@@ -116,6 +128,11 @@
         || d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase) || (d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) 
         && d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase)));
         SearchSpinner = false;
+    }
+
+    public IEnumerable<string?> GetTags(IEnumerable<DocumentDTO> list)
+    {
+        return list.Select(d=>d.Tag).Distinct();
     }
 
 }

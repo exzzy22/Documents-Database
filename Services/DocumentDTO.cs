@@ -15,6 +15,7 @@ namespace Services
         [Required(ErrorMessage = "Select a file")]
         [Range(typeof(bool),"true", "true", ErrorMessage = "Select a file")]
         public bool FileExist { get; set; } = false;
+        public string? Tag { get; set; }
         public virtual ICollection<Item> Items { get; set; }
     }
 }

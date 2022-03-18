@@ -8,6 +8,7 @@
     <InputTextArea @bind-Value="DocumentModel.Company" type="text" class="form-control" id="InputComapny" placeholder="Comapny Name" rows="1" >@DocumentModel.Company</InputTextArea>
     <ValidationMessage For="@(()=>DocumentModel.Company)"/>
   </div>
+  <br/>
   <div class="form-group">
     <label for="InputDate">Date</label>
     <InputDate @bind-Value="DocumentModel.Date" class="form-control"/>
@@ -24,6 +25,16 @@
             <tr><td><input @bind-value="@AddText" /></td><td style="width: 50px;"/><td><button @onclick="@AddItem" type="button" class="btn btn-primary btn-sm" style="width: 60px;">Add</button></td></tr>
         </tbody>
     </table>
+  </div>
+  <br/>
+    <div class="form-group">
+        <input list="tags" name="tag" @bind-value="@DocumentModel.Tag" placeholder="Enter a tag" />
+        <datalist id="tags">
+            @foreach(var tag in Tags)
+                {
+                    <option value="@tag"/>
+                }
+        </datalist>
   </div>
   <br/>
   <div class="form-group">
@@ -58,6 +69,8 @@
     BlazoredModalInstance ModalInstance { get; set; }
     [Parameter]
     public DocumentDTO DocumentModel { get; set; } = new();
+    [Parameter]
+    public IEnumerable<string?> Tags { get; set; }
     public string AddText { get; set; }
     private List<Item> tempItems = new();
     public bool UploadSpinner { get; set; } = false;

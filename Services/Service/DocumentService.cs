@@ -9,10 +9,11 @@ namespace Services.Service
     public interface IDocumentService
     {
         public DocumentDTO Get(int id);
-        public IEnumerable<DocumentDTO> GetAll();
+        public Task<IEnumerable<DocumentDTO>> GetAll();
         public void Update(DocumentDTO docDTO);
         public void Delete(DocumentDTO docDTO);
         public Task Create(DocumentDTO docDTO);
+        public IEnumerable<string?> GetTags();
     }
     public class DocumentService : IDocumentService
     {
@@ -50,9 +51,14 @@ namespace Services.Service
             return null;
         }
 
-        public IEnumerable<DocumentDTO> GetAll()
+        public async Task<IEnumerable<DocumentDTO>> GetAll()
         {
             return _mapper.Map<IEnumerable<Document>, IEnumerable<DocumentDTO>>(_db.Documents);
+        }
+
+        public IEnumerable<string?> GetTags()
+        {
+            return _db.Documents.Select(d=>d.Tag).Distinct();
         }
 
         public void Update(DocumentDTO docDTO)
