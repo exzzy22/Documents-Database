@@ -1,116 +1,69 @@
 ﻿@inject IDocumentService _documentService
 
 <EditForm Model="@DocumentModel" OnValidSubmit="@Update">
-<DataAnnotationsValidator />
-<div style="width: 350px;">
-  <div class="form-group">
-    <label for="InputComapny">Comapny</label>
-    <InputTextArea @bind-Value="DocumentModel.Company" type="text" class="form-control" id="InputComapny" placeholder="Comapny Name" rows="1" >@DocumentModel.Company</InputTextArea>
-    <ValidationMessage For="@(()=>DocumentModel.Company)"/>
-  </div>
-  <br/>
-  <div class="form-group">
-    <label for="InputDate">Date</label>
-    <InputDate @bind-Value="DocumentModel.Date" class="form-control"/>
-  </div>
-  <div class="form-group">
+   <DataAnnotationsValidator />
+   <div style="width: 350px;">
+      <div class="form-group">
+         <label for="InputComapny">Comapny</label>
+         <InputTextArea @bind-Value="DocumentModel.Company" type="text" class="form-control" id="InputComapny" placeholder="Comapny Name" rows="1" >@DocumentModel.Company</InputTextArea>
+         <ValidationMessage For="@(()=>DocumentModel.Company)"/>
+      </div>
       <br/>
-    <table>
-        <tbody>
-            @foreach (var item in DocumentModel.Items)
-            {
-                <tr scope="row"><td>@item.Name</td><td style="width: 250px;"></td>
-                <td><button @onclick="(() => RemoveItem(item))" type="button" class="btn btn-danger btn-sm">Delete</button></td></tr>
-            }
-            <tr><td><input @bind-value="@AddText" /></td><td style="width: 50px;"/><td><button @onclick="@AddItem" type="button" class="btn btn-primary btn-sm" style="width: 60px;">Add</button></td></tr>
-        </tbody>
-    </table>
-  </div>
-  <br/>
-    <div class="form-group">
-        <input list="tags" name="tag" @bind-value="@DocumentModel.Tag" placeholder="Enter a tag" />
-        <datalist id="tags">
+      <div class="form-group">
+         <label for="InputDate">Date</label>
+         <InputDate @bind-Value="DocumentModel.Date" class="form-control"/>
+      </div>
+      <div class="form-group">
+         <br/>
+         <table>
+            <tbody>
+               @foreach (var item in DocumentModel.Items)
+               {
+               <tr scope="row">
+                  <td>@item.Name</td>
+                  <td style="width: 250px;"></td>
+                  <td><button @onclick="(() => RemoveItem(item))" type="button" class="btn btn-danger btn-sm">Delete</button></td>
+               </tr>
+               }
+               <tr>
+                  <td><input @bind-value="@AddText" /></td>
+                  <td style="width: 50px;"/>
+                  <td><button @onclick="@AddItem" type="button" class="btn btn-primary btn-sm" style="width: 60px;">Add</button></td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+      <br/>
+      <div class="form-group">
+         <input list="tags" name="tag" @bind-value="@DocumentModel.Tag" placeholder="Enter a tag" />
+         <datalist id="tags">
             @foreach(var tag in Tags)
-                {
-                    <option value="@tag"/>
-                }
-        </datalist>
-  </div>
-  <br/>
-  <div class="form-group">
-    <InputFile OnChange="@OnInputFileChange" />
-            @if (UploadSpinner)
             {
-                <img src="/Content/Spinner.gif" />
-            }
-  </div>
-  <div class="form-group">
-  <br />
-            @if (!UpdateButtonSpinner)
-            {
-                <button type="submit" class="btn btn-primary" style="float: right;">Update</button>
-            }
-            else
-            {
-                <button class="btn btn-primary" type="button" style="float: right;" disabled>
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  Update
-                </button>
-            }
-  </div>
-</div>
+            <option value="@tag"/>
+               }
+         </datalist>
+      </div>
+      <br/>
+      <div class="form-group">
+      <InputFile OnChange="@OnInputFileChange" />
+      @if (UploadSpinner)
+      {
+      <img src="/Content/Spinner.gif" />
+      }
+      </div>
+      <div class="form-group">
+      <br />
+      @if (!UpdateButtonSpinner)
+      {
+      <button type="submit" class="btn btn-primary" style="float: right;">Update</button>
+      }
+      else
+      {
+      <button class="btn btn-primary" type="button" style="float: right;" disabled>
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Update
+      </button>
+      }
+      </div>
+   </div>
 </EditForm>
-
-@code
-{
-    [CascadingParameter]
-    public IModalService Modal { get; set; }
-    [CascadingParameter] 
-    BlazoredModalInstance ModalInstance { get; set; }
-    [Parameter]
-    public DocumentDTO DocumentModel { get; set; } = new();
-    [Parameter]
-    public IEnumerable<string?> Tags { get; set; }
-    public string AddText { get; set; }
-    private List<Item> tempItems = new();
-    public bool UploadSpinner { get; set; } = false;
-    public bool UpdateButtonSpinner { get; set; } = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        DocumentModel.FileExist = true;
-    }
-
-    private async Task OnInputFileChange(InputFileChangeEventArgs e)
-    {
-        UploadSpinner = true;
-        DocumentModel.FileExt ="."+ e.File.ContentType.Split("/")[1];
-        MemoryStream ms = new MemoryStream();
-        await e.File.OpenReadStream().CopyToAsync(ms);
-        var bytes = ms.ToArray();
-        DocumentModel.DOC = bytes;
-        UploadSpinner = false;
-    }
-    public void AddItem()
-    {
-        Item item = new Item(AddText,DocumentModel.PkDocumentId);
-        DocumentModel.Items.Add(item);
-        AddText = String.Empty;
-    }
-    public async Task RemoveItem(Item item)
-    {
-        var messageForm = Modal.Show<_ConfirmDelete>("Delete Item");
-        var result =  await messageForm.Result;
-
-        if (!result.Cancelled)
-        DocumentModel.Items.Remove(item);
-    }
-    public async Task Update()
-    {
-        UpdateButtonSpinner = true;
-        DocumentModel.FileExist = false;
-        _documentService.Update(DocumentModel);
-        await ModalInstance.CloseAsync();
-        UpdateButtonSpinner = false;
-    }
-}

@@ -1,19 +1,37 @@
-﻿using Services.Service;
-using EFCoreModels;
+﻿using EFCoreModels;
 using AutoMapper;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace Services.Service
 {
     public interface IDocumentService
     {
+        /// <summary>
+        /// Gets document by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public DocumentDTO Get(int id);
+        /// <summary>
+        /// Get all documents from the database
+        /// </summary>
+        /// <returns></returns>
         public Task<IEnumerable<DocumentDTO>> GetAll();
+        /// <summary>
+        /// Updates given document
+        /// </summary>
+        /// <param name="docDTO"></param>
         public void Update(DocumentDTO docDTO);
+        /// <summary>
+        /// Deletes document entry
+        /// </summary>
+        /// <param name="docDTO"></param>
         public void Delete(DocumentDTO docDTO);
+        /// <summary>
+        /// Creates new document entry
+        /// </summary>
+        /// <param name="docDTO"></param>
+        /// <returns></returns>
         public Task Create(DocumentDTO docDTO);
-        public IEnumerable<string?> GetTags();
     }
     public class DocumentService : IDocumentService
     {
@@ -25,7 +43,6 @@ namespace Services.Service
             _db = db;
             _mapper = mapper;
         }
-
         public async Task Create(DocumentDTO docDTO)
         {
             var doc = _mapper.Map<DocumentDTO, Document>(docDTO);
@@ -33,14 +50,12 @@ namespace Services.Service
             await _db.SaveChangesAsync();
 
         }
-
         public void Delete(DocumentDTO docDTO)
         {
             var doc = _db.Documents.First(d => d.PkDocumentId == docDTO.PkDocumentId);
             _db.Documents.Remove(doc);
             _db.SaveChanges();
         }
-
         public DocumentDTO Get(int id)
         {
             var doc = _db.Documents.FirstOrDefault(d => d.PkDocumentId == id);
@@ -50,17 +65,10 @@ namespace Services.Service
             }
             return null;
         }
-
         public async Task<IEnumerable<DocumentDTO>> GetAll()
         {
             return _mapper.Map<IEnumerable<Document>, IEnumerable<DocumentDTO>>(_db.Documents);
         }
-
-        public IEnumerable<string?> GetTags()
-        {
-            return _db.Documents.Select(d=>d.Tag).Distinct();
-        }
-
         public void Update(DocumentDTO docDTO)
         {
             var docDb = _db.Documents.First(d => d.PkDocumentId == docDTO.PkDocumentId);

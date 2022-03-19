@@ -1,8 +1,3 @@
-using Blazored.Modal;
-using EFCoreModels;
-using Microsoft.EntityFrameworkCore;
-using Services.Service;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

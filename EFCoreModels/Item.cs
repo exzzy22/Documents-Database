@@ -9,6 +9,12 @@ namespace EFCoreModels
     [Table("Item")]
     public partial class Item
     {
+        public Item() { }
+        public Item(string name, int documentID)
+        {
+            Name = name;
+            FkDocumentId = documentID;
+        }
         [Key]
         [Column("PK_ItemID")]
         public int PkItemId { get; set; }
@@ -16,16 +22,8 @@ namespace EFCoreModels
         public string Name { get; set; } = null!;
         [Column("FK_DocumentID")]
         public int FkDocumentId { get; set; }
-
         [ForeignKey(nameof(FkDocumentId))]
         [InverseProperty(nameof(Document.Items))]
         public virtual Document FkDocument { get; set; } = null!;
-        public Item()
-        { }
-        public Item(string name, int documentID)
-        {
-            Name = name;
-            FkDocumentId = documentID;
-        }
     }
 }

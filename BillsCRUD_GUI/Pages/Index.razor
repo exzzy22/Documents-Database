@@ -1,138 +1,59 @@
 ﻿@page "/"
-@using System.IO
 
 @inject IDocumentService _documentService
 @inject IModalService modal
 @inject IJSRuntime JS
 
-@using System.Linq
-@using Microsoft.AspNetCore.Mvc
-
 <label for="Search" class="fw-bold">Search</label>
 <input @bind-value="Search" @bind-value:event="oninput" @onkeyup="Filter" id="Search"/>
 <button @onclick="@(()=>ShowAddDocument())" class="btn btn-primary" style="float: right;">Add New Document</button>
- <table class="table">
- <thead>
-  <tr>
-    <th scope="col">Company</th>
-    <th scope="col">Date</th>
-    <th scope="col">Items</th>
-    <th scope="col"></th>
-    <th scope="col">Tag</th>
-  </tr>
-</thead>
-    @if (SearchSpinner)
-    {
-        <tbody><tr><td><img src="/Content/Search.gif" /></td></tr></tbody> 
-    }
-    else
-    {
-    <tbody>
-        @foreach (var doc in Documents)
-        {
-            <tr scope="row">
-                <td>@doc.Company</td>
-                <td>@if (doc.Date.HasValue) 
-                    {
-                        @doc.Date.Value.ToString("d.M.yyyy");
-                    }
-                    </td>
-                <td><_ItemsView Items="@doc.Items"></_ItemsView></td>
-                <td>
-                    <button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button>
-                    <button @onclick="@(()=>RemoveDocument(doc))" class="btn btn-danger">Delete</button>
-                    <button @onclick="@(()=>DownloadDocument(doc))" class="btn btn-success">Download</button>
-                </td>
-                <td>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-tag" viewBox="0 0 16 16">
-                      <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0z"/>
-                      <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1zm0 5.586 7 7L13.586 9l-7-7H2v4.586z"/>
-                    </svg> @doc.Tag
-               </td>
-            </tr>
-        }
-    </tbody>
-    }
-</table> 
-
-
-
-@code{
-    [CascadingParameter]
-    public IModalService Modal { get; set; }
-    private IEnumerable<DocumentDTO> Documents { get; set; }
-    private IEnumerable<string?> Tags { get; set; }
-    private string Search { get; set; } = string.Empty;
-    bool SearchSpinner { get; set; } = false;
-
-    protected async override Task OnInitializedAsync()
-    {
-        Documents = await _documentService.GetAll();
-        Tags = GetTags(Documents);
-    }
-    public async Task ShowEditDocument(DocumentDTO doc)
-    {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(_PopUpEdit.DocumentModel), doc);
-        parameters.Add(nameof(_PopUpEdit.Tags), Tags);
-        var messageForm = Modal.Show<_PopUpEdit>("Edit Document", parameters);
-        var result =  await messageForm.Result;
-
-        //if (!result.Cancelled)
-        Documents = await _documentService.GetAll();
-    }
-
-    public async Task ShowAddDocument()
-    {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(_PopUpAdd.Tags), Tags);
-        var messageForm = Modal.Show<_PopUpAdd>("Add Document", parameters);
-        var result =  await messageForm.Result;
-
-        if (!result.Cancelled)
-            Documents = await _documentService.GetAll();
-    }
-
-    public async Task RemoveDocument(DocumentDTO doc)
-    {
-        var messageForm = Modal.Show<_ConfirmDelete>("Delete Document");
-        var result =  await messageForm.Result;
-
-        if (!result.Cancelled)
-            _documentService.Delete(doc);
-
-        Documents = await _documentService.GetAll();
-    }
-
-    public async Task DownloadDocument(DocumentDTO doc)
-    {
-        var fileStream = GetFileStream(doc);
-        var fileName = Guid.NewGuid().ToString() + doc.FileExt;
-
-        using var streamRef = new DotNetStreamReference(stream: fileStream);
-
-        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
-    }
-
-    private Stream GetFileStream(DocumentDTO doc)
-    {
-        var fileStream = new MemoryStream(doc.DOC);
-
-        return fileStream;
-    }
-
-    public void Filter()
-    {
-        SearchSpinner = true;
-        Documents = Documents.Where(d => d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) 
-        || d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase) || (d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase) 
-        && d.ItemsInString.GetString().Contains(Search,StringComparison.OrdinalIgnoreCase)));
-        SearchSpinner = false;
-    }
-
-    public IEnumerable<string?> GetTags(IEnumerable<DocumentDTO> list)
-    {
-        return list.Select(d=>d.Tag).Distinct();
-    }
-
-}
+<table class="table">
+   <thead>
+      <tr>
+         <th scope="col">Company</th>
+         <th scope="col">Date</th>
+         <th scope="col">Items</th>
+         <th scope="col"></th>
+         <th scope="col">Tag</th>
+      </tr>
+   </thead>
+   @if (SearchSpinner)
+   {
+   <tbody>
+      <tr>
+         <td><img src="/Content/Search.gif" /></td>
+      </tr>
+   </tbody>
+   }
+   else
+   {
+   <tbody>
+      @foreach (var doc in Documents)
+      {
+      <tr scope="row">
+         <td>@doc.Company</td>
+         <td>@if (doc.Date.HasValue) 
+            {
+            @doc.Date.Value.ToString("d.M.yyyy");
+            }
+         </td>
+         <td>
+            <_ItemsView Items="@doc.Items"></_ItemsView>
+         </td>
+         <td>
+            <button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button>
+            <button @onclick="@(()=>RemoveDocument(doc))" class="btn btn-danger">Delete</button>
+            <button @onclick="@(()=>DownloadDocument(doc))" class="btn btn-success">Download</button>
+         </td>
+         <td>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-tag" viewBox="0 0 16 16">
+               <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0z"/>
+               <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1zm0 5.586 7 7L13.586 9l-7-7H2v4.586z"/>
+            </svg>
+            @doc.Tag
+         </td>
+      </tr>
+      }
+   </tbody>
+   }
+</table>

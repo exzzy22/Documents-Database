@@ -1,24 +1,13 @@
 ﻿<button type="button" class="btn btn-dark" @onclick="Toggle">Show</button>
 @if (IsToggle)
 {
-    <table>
-        <tbody>
-            @foreach (var item in Items)
-            {
-                <tr>@item.Name</tr>
-            }
-        </tbody>
-    </table>
+<table>
+   <tbody>
+      @foreach (var item in Items)
+      {
+      <tr>@item.Name</tr>
+      }
+   </tbody>
+</table>
 }
 else { }
-
-@code {
-    [Parameter]
-    public IEnumerable<Item> Items { get; set; }
-    public bool IsToggle { get; set; } = false;
-
-    public void Toggle()
-    {
-        IsToggle = !IsToggle;
-    }
-}

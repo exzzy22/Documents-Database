@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +11,6 @@ namespace EFCoreModels
         {
             Items = new HashSet<Item>();
         }
-
         [Key]
         [Column("PK_DocumentID")]
         public int PkDocumentId { get; set; }
@@ -26,10 +23,8 @@ namespace EFCoreModels
         public string FileExt { get; set; }
         [StringLength(50)]
         public string? Tag { get; set; }
-
         [Column("DOC")]
         public byte[] DOC { get; set; } = null!;
-
         [InverseProperty(nameof(Item.FkDocument))]
         public virtual ICollection<Item> Items { get; set; }
     }
