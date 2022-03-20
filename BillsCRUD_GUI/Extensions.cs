@@ -24,5 +24,14 @@
             }
             else return String.Empty;
         }
+        /// <summary>
+        /// Loads all distinct tags from document list
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static IEnumerable<string?> GetTags(this IEnumerable<DocumentDTO> list)
+        {
+            return list.Select(d => d.Tag).Distinct();
+        }
     }
 }

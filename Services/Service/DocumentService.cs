@@ -1,5 +1,6 @@
 ﻿using EFCoreModels;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.Service
 {
@@ -10,7 +11,7 @@ namespace Services.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public DocumentDTO Get(int id);
+        public Task<DocumentDTO> Get(int id);
         /// <summary>
         /// Get all documents from the database
         /// </summary>
@@ -20,12 +21,12 @@ namespace Services.Service
         /// Updates given document
         /// </summary>
         /// <param name="docDTO"></param>
-        public void Update(DocumentDTO docDTO);
+        public Task Update(DocumentDTO docDTO);
         /// <summary>
         /// Deletes document entry
         /// </summary>
         /// <param name="docDTO"></param>
-        public void Delete(DocumentDTO docDTO);
+        public Task Delete(DocumentDTO docDTO);
         /// <summary>
         /// Creates new document entry
         /// </summary>
@@ -50,15 +51,15 @@ namespace Services.Service
             await _db.SaveChangesAsync();
 
         }
-        public void Delete(DocumentDTO docDTO)
+        public async Task Delete(DocumentDTO docDTO)
         {
-            var doc = _db.Documents.First(d => d.PkDocumentId == docDTO.PkDocumentId);
+            var doc = await _db.Documents.FirstAsync(d => d.PkDocumentId == docDTO.PkDocumentId);
             _db.Documents.Remove(doc);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
-        public DocumentDTO Get(int id)
+        public async Task<DocumentDTO> Get(int id)
         {
-            var doc = _db.Documents.FirstOrDefault(d => d.PkDocumentId == id);
+            var doc = await _db.Documents.FirstOrDefaultAsync(d => d.PkDocumentId == id);
             if (doc != null)
             {
                 return _mapper.Map<Document, DocumentDTO>(doc);
@@ -69,13 +70,13 @@ namespace Services.Service
         {
             return _mapper.Map<IEnumerable<Document>, IEnumerable<DocumentDTO>>(_db.Documents);
         }
-        public void Update(DocumentDTO docDTO)
+        public async Task Update(DocumentDTO docDTO)
         {
-            var docDb = _db.Documents.First(d => d.PkDocumentId == docDTO.PkDocumentId);
+            var docDb = await _db.Documents.FirstAsync(d => d.PkDocumentId == docDTO.PkDocumentId);
             var doc = _mapper.Map<DocumentDTO, Document>(docDTO);
             docDb.Items = doc.Items;
             _db.Entry(docDb).CurrentValues.SetValues(doc);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
     }
 }

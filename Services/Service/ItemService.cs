@@ -1,12 +1,13 @@
 ﻿using EFCoreModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.Service
 {
     public interface IItemService
     {
-        public IEnumerable<Item> GetAll();
-        public int Add(Item item);
-        public int Delete(Item item);
+        public Task<IEnumerable<Item>> GetAll();
+        public Task<int> Add(Item item);
+        public Task<int> Delete(Item item);
     }
     public class ItemService : IItemService
     {
@@ -16,22 +17,21 @@ namespace Services.Service
         {
             _db = db;
         }
-
-        public int Add(Item item)
+        public async Task<int> Add(Item item)
         {
-            _db.Items.Add(item);
-            return  _db.SaveChanges();
+            await _db.Items.AddAsync(item);
+            return  await _db.SaveChangesAsync();
 
         }
-        public int Delete(Item item)
+        public async Task<int> Delete(Item item)
         {
             _db.Items.Remove(item);
-            return _db.SaveChanges();
+            return await _db.SaveChangesAsync();
         }
 
-        public IEnumerable<Item> GetAll()
+        public async Task<IEnumerable<Item>> GetAll()
         {
-            return _db.Items.ToList();
+            return await _db.Items.ToListAsync();
         }
     }
 }

@@ -27,7 +27,7 @@
         {
             UploadSpinner = true;
             DocumentModel.FileExt = "." + e.File.ContentType.Split("/")[1];
-            MemoryStream ms = new MemoryStream();
+            MemoryStream ms = new();
             await e.File.OpenReadStream().CopyToAsync(ms);
             var bytes = ms.ToArray();
             DocumentModel.DOC = bytes;
@@ -38,7 +38,7 @@
         /// </summary>
         private void AddItem()
         {
-            Item item = new Item(AddText, DocumentModel.PkDocumentId);
+            Item item = new(AddText, DocumentModel.PkDocumentId);
             DocumentModel.Items.Add(item);
             AddText = String.Empty;
         }
@@ -61,7 +61,7 @@
         {
             UpdateButtonSpinner = true;
             DocumentModel.FileExist = false;
-            _documentService.Update(DocumentModel);
+            await _documentService.Update(DocumentModel);
             await ModalInstance.CloseAsync();
             UpdateButtonSpinner = false;
         }

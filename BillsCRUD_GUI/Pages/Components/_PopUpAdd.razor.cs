@@ -28,7 +28,7 @@
         {
             UploadSpinner = true;
             DocumentModel.FileExt = "." + e.File.ContentType.Split("/")[1];
-            MemoryStream ms = new MemoryStream();
+            MemoryStream ms = new();
             await e.File.OpenReadStream().CopyToAsync(ms);
             var bytes = ms.ToArray();
             DocumentModel.DOC = bytes;

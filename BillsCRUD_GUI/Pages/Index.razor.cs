@@ -12,7 +12,7 @@
         protected async override Task OnInitializedAsync()
         {
             Documents = await _documentService.GetAll();
-            Tags = GetTags(Documents);
+            Tags = Documents.GetTags();
         }
         /// <summary>
         /// Opens _PopUpEdit component
@@ -55,7 +55,7 @@
             var result = await messageForm.Result;
 
             if (!result.Cancelled)
-                _documentService.Delete(doc);
+               await _documentService.Delete(doc);
 
             Documents = await _documentService.GetAll();
         }
@@ -83,15 +83,6 @@
             || d.ItemsInString.GetString().Contains(Search, StringComparison.OrdinalIgnoreCase) || (d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase)
             && d.ItemsInString.GetString().Contains(Search, StringComparison.OrdinalIgnoreCase)));
             SearchSpinner = false;
-        }
-        /// <summary>
-        /// Loads all distinct tags from document list
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        private IEnumerable<string?> GetTags(IEnumerable<DocumentDTO> list)
-        {
-            return list.Select(d => d.Tag).Distinct();
         }
     }
 }
