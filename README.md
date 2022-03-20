@@ -1,7 +1,7 @@
 [![C#](https://img.shields.io/badge/C%23-2ea44f)](https://github.com/dotnet/csharplang)
 [![.NET - 6](https://img.shields.io/badge/.NET-6-2ea44f)](https://dotnet.microsoft.com/en-us/)
 [![Blazor - Server](https://img.shields.io/badge/Blazor-Server-2ea44f)](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-2ea44f)](https://getbootstrap.com/)
+[![Bootstrap - 5](https://img.shields.io/badge/Bootstrap-2ea44f)](https://getbootstrap.com/)
 
 # Documents-Database
 
@@ -19,3 +19,4 @@ GUI is made for storing and searching for documents(mostly bills for now). The i
 
 - [ ] Add categories for documents so more types of documents can be easier to store
 - [ ] Add user authentications
+- [ ] Improve search filter
