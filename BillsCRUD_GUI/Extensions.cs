@@ -25,13 +25,13 @@
             else return String.Empty;
         }
         /// <summary>
-        /// Loads all distinct tags from document list
+        /// Loads all distinct categories from document list
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public static IEnumerable<string?> GetTags(this IEnumerable<DocumentDTO> list)
+        public static IEnumerable<string?> GetCategories(this IEnumerable<DocumentDTO> list)
         {
-            return list.Select(d => d.Tag).Distinct();
+            return list.Select(d => d.Category).Distinct();
         }
     }
 }

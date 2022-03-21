@@ -33,6 +33,11 @@ namespace Services.Service
         /// <param name="docDTO"></param>
         /// <returns></returns>
         public Task Create(DocumentDTO docDTO);
+        /// <summary>
+        /// Get all categories
+        /// </summary>
+        /// <returns></returns>
+        public Task<IEnumerable<string>> GetAllCategories();
     }
     public class DocumentService : IDocumentService
     {
@@ -70,6 +75,12 @@ namespace Services.Service
         {
             return _mapper.Map<IEnumerable<Document>, IEnumerable<DocumentDTO>>(_db.Documents);
         }
+
+        public async Task<IEnumerable<string>> GetAllCategories()
+        {
+            return await _db.Documents.Select(d=>d.Category).Distinct().ToListAsync();
+        }
+
         public async Task Update(DocumentDTO docDTO)
         {
             var docDb = await _db.Documents.FirstAsync(d => d.PkDocumentId == docDTO.PkDocumentId);

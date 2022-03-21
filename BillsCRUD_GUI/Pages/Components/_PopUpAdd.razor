@@ -36,10 +36,14 @@
       <br/>
       <div class="form-group">
          <input list="tags" name="tag" @bind-value="@DocumentModel.Tag" placeholder="Enter a tag" />
-         <datalist id="tags">
-            @foreach(var tag in Tags)
+      </div>
+      <br/>
+      <div class="form-group">
+         <input list="categories" name="category" @bind-value="@DocumentModel.Category" placeholder="Enter a category" />
+         <datalist id="categories">
+            @foreach(var category in Categories)
             {
-            <option value="@tag"/>
+            <option value="@category"/>
                }
          </datalist>
       </div>

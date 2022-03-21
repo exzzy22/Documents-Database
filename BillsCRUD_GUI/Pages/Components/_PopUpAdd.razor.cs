@@ -5,7 +5,7 @@
         [Parameter]
         public DocumentDTO DocumentModel { get; set; }
         [Parameter]
-        public IEnumerable<string?> Tags { get; set; }
+        public IEnumerable<string?> Categories { get; set; }
         [CascadingParameter]
         private IModalService Modal { get; set; }
         [CascadingParameter]
@@ -63,6 +63,7 @@
         {
             AddButtonSpinner = true;
             DocumentModel.Tag = DocumentModel.Tag.FirstCharToUpper();
+            DocumentModel.Category = DocumentModel.Category.FirstCharToUpper();
             await _documentService.Create(DocumentModel);
             await ModalInstance.CloseAsync();
             AddButtonSpinner = false;

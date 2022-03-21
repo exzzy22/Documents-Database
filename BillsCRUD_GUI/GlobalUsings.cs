@@ -8,3 +8,5 @@ global using BillsCRUD_GUI.Pages.Components;
 global using Microsoft.JSInterop;
 global using Microsoft.EntityFrameworkCore;
 global using Services.Service;
+global using Microsoft.AspNetCore.Components.Routing;
+

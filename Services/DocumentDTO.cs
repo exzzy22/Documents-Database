@@ -16,6 +16,7 @@ namespace Services
         [Range(typeof(bool),"true", "true", ErrorMessage = "Select a file")]
         public bool FileExist { get; set; } = false;
         public string? Tag { get; set; }
+        public string? Category { get; set; }
         public virtual ICollection<Item> Items { get; set; }
     }
 }

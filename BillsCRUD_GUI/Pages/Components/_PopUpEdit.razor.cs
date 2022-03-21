@@ -5,7 +5,7 @@
         [Parameter]
         public DocumentDTO DocumentModel { get; set; } = new();
         [Parameter]
-        public IEnumerable<string?> Tags { get; set; }
+        public IEnumerable<string?> Categories { get; set; }
         [CascadingParameter]
         private IModalService Modal { get; set; }
         [CascadingParameter]
@@ -61,6 +61,8 @@
         {
             UpdateButtonSpinner = true;
             DocumentModel.FileExist = false;
+            DocumentModel.Tag = DocumentModel.Tag.FirstCharToUpper();
+            DocumentModel.Category = DocumentModel.Category.FirstCharToUpper();
             await _documentService.Update(DocumentModel);
             await ModalInstance.CloseAsync();
             UpdateButtonSpinner = false;

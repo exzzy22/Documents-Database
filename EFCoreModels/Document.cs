@@ -20,11 +20,14 @@ namespace EFCoreModels
         [Column(TypeName = "date")]
         public DateTime? Date { get; set; }
         [StringLength(10)]
-        public string FileExt { get; set; }
+        public string FileExt { get; set; } = null!;
         [StringLength(50)]
         public string? Tag { get; set; }
         [Column("DOC")]
         public byte[] DOC { get; set; } = null!;
+        [StringLength(50)]
+        public string Category { get; set; }
+
         [InverseProperty(nameof(Item.FkDocument))]
         public virtual ICollection<Item> Items { get; set; }
     }

@@ -8,7 +8,8 @@ Company varchar(30) not null,
 [Date] date,
 FileExt varchar(10) not null,
 Tag varchar(50),
-DOC varbinary(max) not null
+DOC varbinary(max) not null,
+Category varchar(50)
 )
 
 create table Item

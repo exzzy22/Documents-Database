@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-light bg-light">
+﻿@inject IDocumentService _documentService
+
+<div class="top-row ps-3 navbar navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Bills Database</a>
         <button title="Navigation menu" class="navbar-toggler">
@@ -20,9 +22,32 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tags">
-                <span class="oi oi-tags" aria-hidden="true"></span> Tags
+            <NavLink class="nav-link" @onclick="()=>Expand()" style="cursor:pointer;">
+                <span class="oi oi-menu"></span> Categories
             </NavLink>
         </div>
+        @if (expandSubNav)
+        {
+            foreach (var category in Categories)
+            {
+            <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@category">
+                <span class="oi oi-document" aria-hidden="true"></span>@category
+            </NavLink>
+            </div>
+            }
+        }
     </nav>
 </div>
+@code {
+    public IEnumerable<string> Categories { get; set; }
+
+    private bool expandSubNav;
+
+    private async Task Expand()
+    {
+        Categories = await _documentService.GetAllCategories();
+        expandSubNav = !expandSubNav;
+    }
+
+}

@@ -2,11 +2,13 @@
 {
     public partial class Index
     {
+        [Parameter]
+        public string? Category { get; set; }
         [CascadingParameter]
         private IModalService Modal { get; set; }
         private IEnumerable<DocumentDTO> Documents { get; set; }
         private IEnumerable<DocumentDTO> DocumentsNonFiltered { get; set; }
-        private IEnumerable<string?> Tags { get; set; }
+        private IEnumerable<string?> Categories { get; set; }
         private string Search { get; set; } = string.Empty;
         private bool SearchSpinner { get; set; } = false;
 
@@ -14,7 +16,21 @@
         {
             Documents = await _documentService.GetAll();
             DocumentsNonFiltered = Documents;
-            Tags = Documents.GetTags();
+            Categories = Documents.GetCategories();
+        }
+        protected override async Task OnParametersSetAsync()
+        {
+            Documents = await _documentService.GetAll();
+            if (Category == null)
+            {
+                DocumentsNonFiltered = Documents;
+            }
+            else
+            {
+                Documents = Documents.Where(d => d.Category == Category);
+                DocumentsNonFiltered = Documents;
+            }
+            Categories = Documents.GetCategories();
         }
         /// <summary>
         /// Opens _PopUpEdit component
@@ -25,7 +41,7 @@
         {
             var parameters = new ModalParameters();
             parameters.Add(nameof(_PopUpEdit.DocumentModel), doc);
-            parameters.Add(nameof(_PopUpEdit.Tags), Tags);
+            parameters.Add(nameof(_PopUpEdit.Categories), Categories);
             var messageForm = Modal.Show<_PopUpEdit>("Edit Document", parameters);
             var result = await messageForm.Result;
             
@@ -43,7 +59,7 @@
         private async Task ShowAddDocument()
         {
             var parameters = new ModalParameters();
-            parameters.Add(nameof(_PopUpAdd.Tags), Tags);
+            parameters.Add(nameof(_PopUpAdd.Categories), Categories);
             var messageForm = Modal.Show<_PopUpAdd>("Add Document", parameters);
             var result = await messageForm.Result;
 
@@ -109,6 +125,10 @@
             return Documents = list.Where(d => d.Company.Contains(filterWord, StringComparison.OrdinalIgnoreCase)
             || d.ItemsInString.GetString().Contains(filterWord, StringComparison.OrdinalIgnoreCase)
             || d.Tag.Contains(filterWord, StringComparison.OrdinalIgnoreCase));
+        }
+        void LocationChanged(object sender, LocationChangedEventArgs e)
+        {
+            Console.WriteLine("Changed");
         }
     }
 }
