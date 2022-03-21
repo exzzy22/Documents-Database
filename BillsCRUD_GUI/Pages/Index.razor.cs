@@ -5,6 +5,7 @@
         [CascadingParameter]
         private IModalService Modal { get; set; }
         private IEnumerable<DocumentDTO> Documents { get; set; }
+        private IEnumerable<DocumentDTO> DocumentsNonFiltered { get; set; }
         private IEnumerable<string?> Tags { get; set; }
         private string Search { get; set; } = string.Empty;
         private bool SearchSpinner { get; set; } = false;
@@ -12,6 +13,7 @@
         protected async override Task OnInitializedAsync()
         {
             Documents = await _documentService.GetAll();
+            DocumentsNonFiltered = Documents;
             Tags = Documents.GetTags();
         }
         /// <summary>
@@ -26,9 +28,13 @@
             parameters.Add(nameof(_PopUpEdit.Tags), Tags);
             var messageForm = Modal.Show<_PopUpEdit>("Edit Document", parameters);
             var result = await messageForm.Result;
+            
+            if (!result.Cancelled)
+            {
+                Documents = await _documentService.GetAll();
+                DocumentsNonFiltered = Documents;
+            }
 
-            //if (!result.Cancelled)
-            Documents = await _documentService.GetAll();
         }
         /// <summary>
         /// Opens _PopUpAdd component
@@ -42,7 +48,10 @@
             var result = await messageForm.Result;
 
             if (!result.Cancelled)
+            {
                 Documents = await _documentService.GetAll();
+                DocumentsNonFiltered = Documents;
+            }
         }
         /// <summary>
         /// Delete document from DB
@@ -55,9 +64,11 @@
             var result = await messageForm.Result;
 
             if (!result.Cancelled)
-               await _documentService.Delete(doc);
-
-            Documents = await _documentService.GetAll();
+            {
+                await _documentService.Delete(doc);
+                Documents = await _documentService.GetAll();
+                DocumentsNonFiltered = Documents;
+            }
         }
         /// <summary>
         /// Convert document from binary to file and download
@@ -76,13 +87,28 @@
         /// <summary>
         /// Filters documents
         /// </summary>
-        private void Filter()
+        private async Task Filter()
         {
+            string [] wordsArray = Search.Split(" ");
             SearchSpinner = true;
-            Documents = Documents.Where(d => d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase)
-            || d.ItemsInString.GetString().Contains(Search, StringComparison.OrdinalIgnoreCase) || (d.Company.Contains(Search, StringComparison.OrdinalIgnoreCase)
-            && d.ItemsInString.GetString().Contains(Search, StringComparison.OrdinalIgnoreCase)));
+            Documents = DocumentsNonFiltered;
+            foreach (var word in wordsArray)
+            {
+                Documents = await GetFilteredList(Documents, word);
+            }
             SearchSpinner = false;
+        }
+        /// <summary>
+        /// Returns list of documents that contains filterWord in Company name, Items name or Tag
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="filterWord"></param>
+        /// <returns></returns>
+        private async Task<IEnumerable<DocumentDTO>> GetFilteredList(IEnumerable<DocumentDTO> list, string filterWord)
+        {
+            return Documents = list.Where(d => d.Company.Contains(filterWord, StringComparison.OrdinalIgnoreCase)
+            || d.ItemsInString.GetString().Contains(filterWord, StringComparison.OrdinalIgnoreCase)
+            || d.Tag.Contains(filterWord, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
