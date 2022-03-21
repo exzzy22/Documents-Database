@@ -18,6 +18,6 @@ GUI is made for storing and searching for documents(mostly bills for now). The i
 
 ### To do
 
-- [ ] Add categories for documents so more types of documents can be easier to store
+- [x] Add categories for documents so more types of documents can be easier to store
 - [ ] Add user authentications
 - [x] Improve search filter
