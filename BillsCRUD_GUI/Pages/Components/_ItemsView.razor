@@ -1,13 +1,50 @@
-﻿<button type="button" class="btn btn-dark" @onclick="Toggle">Show</button>
-@if (IsToggle)
+﻿@if (IsToggle)
 {
 <table>
    <tbody>
-      @foreach (var item in Items)
+      @if (Items.Count()>2)
       {
-      <tr>@item.Name</tr>
-      }
+         @foreach (var item in Items)
+          {
+            <tr>@item.Name</tr>
+          }
+                <tr><i class="bi bi-arrows-collapse" @onclick="Toggle"></i></tr>
+            }
+            else
+            {
+              @foreach (var item in Items)
+              {
+              <tr>@item.Name</tr>
+              }
+            }
+
    </tbody>
-</table>
+    </table>
 }
-else { }
+else 
+{
+    if (Items.Count() <= 2)
+    {
+        <table>
+            <tbody>
+                @foreach (var item in Items)
+                {
+                    <tr>@item.Name</tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <table>
+           <tbody>
+              @for (var i = 0; i < 2; i++)
+              {
+                  
+              <tr>@Items[i].Name</tr>
+              }
+              <tr><i class="bi bi-arrows-expand" @onclick="Toggle"></i></tr>
+           </tbody>
+        </table>
+    }
+}

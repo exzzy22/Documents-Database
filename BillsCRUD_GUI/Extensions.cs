@@ -3,15 +3,6 @@
     public static class Extensions
     {
         /// <summary>
-        /// Converts List<string> to string with ',' seperator beetween elements
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static string GetString(this List<string> source)
-        {
-            return string.Join("", source);
-        }
-        /// <summary>
         /// Capitalize first letter of string
         /// </summary>
         /// <param name="input"></param>

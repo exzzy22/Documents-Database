@@ -1,5 +1,5 @@
 ﻿@page "/"
-@page "/{Category}"
+@page "/{Category?}"
 
 @inject IDocumentService _documentService
 @inject IModalService modal
@@ -39,7 +39,7 @@
             }
          </td>
          <td>
-            <_ItemsView Items="@doc.Items"></_ItemsView>
+            <_ItemsView Items="@doc.Items.ToList()"></_ItemsView>
          </td>
          <td>
             <button @onclick="@(()=>ShowEditDocument(doc))" class="btn btn-primary">Edit</button>

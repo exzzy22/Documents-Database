@@ -51,7 +51,7 @@ namespace Services.Service
         }
         public async Task Create(DocumentDTO docDTO)
         {
-            var doc = _mapper.Map<DocumentDTO, Document>(docDTO);
+            var doc = _mapper.Map<Document>(docDTO);
             await _db.Documents.AddAsync(doc);
             await _db.SaveChangesAsync();
 
@@ -67,13 +67,13 @@ namespace Services.Service
             var doc = await _db.Documents.FirstOrDefaultAsync(d => d.PkDocumentId == id);
             if (doc != null)
             {
-                return _mapper.Map<Document, DocumentDTO>(doc);
+                return _mapper.Map<DocumentDTO>(doc);
             }
             return null;
         }
         public async Task<IEnumerable<DocumentDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<Document>, IEnumerable<DocumentDTO>>(_db.Documents);
+            return _mapper.Map<IEnumerable<DocumentDTO>>(_db.Documents);
         }
 
         public async Task<IEnumerable<string>> GetAllCategories()
@@ -84,7 +84,7 @@ namespace Services.Service
         public async Task Update(DocumentDTO docDTO)
         {
             var docDb = await _db.Documents.FirstAsync(d => d.PkDocumentId == docDTO.PkDocumentId);
-            var doc = _mapper.Map<DocumentDTO, Document>(docDTO);
+            var doc = _mapper.Map<Document>(docDTO);
             docDb.Items = doc.Items;
             _db.Entry(docDb).CurrentValues.SetValues(doc);
             await _db.SaveChangesAsync();

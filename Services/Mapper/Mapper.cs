@@ -7,7 +7,9 @@ namespace Services.Mapper
     {
         public Mapper()
         {
-            CreateMap<DocumentDTO, Document>().ReverseMap().ForMember(d => d.ItemsInString, f => f.MapFrom(s => s.Items.Select(i=>i.Name)));
+            //CreateMap<DocumentDTO, Document>().ReverseMap().ForMember(d => d.ItemsInString, f => f.MapFrom(s => s.Items.Select(i=>i.Name)));
+            CreateMap<DocumentDTO, Document>().ReverseMap();
+
         }
     }
 }

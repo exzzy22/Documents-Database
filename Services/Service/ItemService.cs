@@ -19,7 +19,7 @@ namespace Services.Service
         }
         public async Task<int> Add(Item item)
         {
-            await _db.Items.AddAsync(item);
+            _db.Items.Add(item);
             return  await _db.SaveChangesAsync();
 
         }
