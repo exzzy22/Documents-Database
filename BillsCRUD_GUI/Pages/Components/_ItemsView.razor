@@ -8,7 +8,7 @@
           {
             <tr>@item.Name</tr>
           }
-                <tr><i class="bi bi-arrows-collapse" @onclick="Toggle"></i></tr>
+                <tr><input type="image" src="Content\collapse.png" alt="Collapse" width="20" height="20" @onclick="Toggle"></tr>
             }
             else
             {
@@ -43,7 +43,7 @@ else
                   
               <tr>@Items[i].Name</tr>
               }
-              <tr><i class="bi bi-arrows-expand" @onclick="Toggle"></i></tr>
+              <tr><input type="image" src="Content\expand.png" alt="Expand" width="20" height="20" @onclick="Toggle"></tr>
            </tbody>
         </table>
     }

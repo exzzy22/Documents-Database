@@ -4,6 +4,8 @@ public partial class Index
 {
     [Parameter]
     public string? Category { get; set; }
+    [Parameter]
+    public string? SearchTag { get; set; }
     [CascadingParameter]
     private IModalService Modal { get; set; }
     private IEnumerable<DocumentDTO> Documents { get; set; }
@@ -17,6 +19,7 @@ public partial class Index
         Documents = await _documentService.GetAll();
         DocumentsNonFiltered = Documents;
         Categories = Documents.GetCategories();
+        Search = string.Empty;
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -24,11 +27,13 @@ public partial class Index
         if (Category == null)
         {
             DocumentsNonFiltered = Documents;
+            if (!String.IsNullOrEmpty(Search)) Filter();
         }
         else
         {
             Documents = Documents.Where(d => d.Category == Category);
             DocumentsNonFiltered = Documents;
+            if (!String.IsNullOrEmpty(Search)) Filter();
         }
         Categories = Documents.GetCategories();
     }
@@ -130,5 +135,25 @@ public partial class Index
         }
 
         return filteredList;
+    }
+
+    private async Task TagSearch(string tag)
+    {
+        SearchTag = tag;
+        if (String.IsNullOrEmpty(Search))
+        {
+            Search = SearchTag;
+            Filter();
+        }
+            
+        else
+        {
+            if (!Search.Contains(SearchTag, StringComparison.OrdinalIgnoreCase))
+            {
+                Search = $"{Search} {SearchTag}";
+                Filter();
+            }
+        }
+
     }
 }
